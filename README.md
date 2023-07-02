@@ -13,7 +13,7 @@ Yearly Change: Column J. The difference between open and close values at the beg
 
 Percent Change: Column K,  yearly change is divided by opening value. Percent change column has been % formatted.
 
-Yearly Change and percent change Columns have been formatted with green and red for positive and negative changes.
+Yearly Change and Percent Change columns have been formatted with green and red for positive and negative changes.
 
 Total Stock Volume: Column L, Total Stock Volumes for each ticker symbol.
 

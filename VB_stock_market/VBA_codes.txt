@@ -1,0 +1,118 @@
+Sub WorksheetLoop()
+    For Each ws In Worksheets
+        
+        Dim WorkSheetname As String
+        LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+        
+        WorkSheetname = ws.Name
+        
+        Dim Ticker  As String
+        Dim Total_Volume As Double
+        Dim Yearly_Change As Double
+        Dim Yearly_Change_Percent As Double
+        
+        Dim Greatest_Percent_Increase As Double
+        Dim Greatest_Percent_Increase_Ticker As String
+        
+        Dim Greatest_Percent_Decrease As Double
+        Dim Greatest_Percent_Decrease_Ticker As String
+        
+        Dim Greatest_Total_Volume As Double
+        Dim Greatest_Total_Volume_Ticker As String
+        
+        Dim Table_Row As Long
+        Dim i       As Long
+        
+        ws.Range("I1").Value = "Ticker"
+        ws.Range("J1").Value = "Yearly Change"
+        ws.Range("K1").Value = "Percent Change"
+        ws.Range("L1").Value = "Total Stock Volume"
+        ws.Range("P1").Value = "Ticker"
+        ws.Range("Q1").Value = "Value"
+        ws.Range("O2").Value = "Greatest % Increase"
+        ws.Range("O3").Value = "Greatest % Decrease"
+        ws.Range("O4").Value = "Greatest Total Volume"
+        
+        Table_Row = 2
+        Total_Volume = 0
+        Last_Ticker = None
+        Year_Opening = None
+        
+        Greatest_Percent_Increase = 0
+        Greatest_Percent_Increase_Ticker = ""
+        
+        Greatest_Percent_Decrease = 0
+        Greatest_Percent_Decrease_Ticker = ""
+        
+        Greatest_Total_Volume = 0
+        Greatest_Total_Volume_Ticker = ""
+        
+        For i = 2 To LastRow + 1
+            Ticker = ws.Cells(i, 1).Value
+            
+            If Ticker <> Last_Ticker Then
+                If Last_Ticker <> None Then
+                    Year_Closing = ws.Cells(i - 1, 6).Value
+                    Yearly_Change = Year_Closing - Year_Opening
+                    Yearly_Change_Percent = Yearly_Change / Year_Opening
+                    ws.Cells(Table_Row, 9) = Last_Ticker
+                    ws.Cells(Table_Row, 10).Value = Yearly_Change
+                    ws.Cells(Table_Row, 11).Value = Yearly_Change_Percent
+                    ws.Cells(Table_Row, 12).Value = Total_Volume
+                    
+                    If Yearly_Change_Percent > Greatest_Percent_Increase Then
+                        Greatest_Percent_Increase = Yearly_Change_Percent
+                        Greatest_Percent_Increase_Ticker = Last_Ticker
+                    End If
+                    
+                    If Yearly_Change_Percent < Greatest_Percent_Decrease Then
+                        Greatest_Percent_Decrease = Yearly_Change_Percent
+                        Greatest_Percent_Decrease_Ticker = Last_Ticker
+                    End If
+                    
+                    If Total_Volume > Greatest_Total_Volume Then
+                        Greatest_Total_Volume = Total_Volume
+                        Greatest_Total_Volume_Ticker = Ticker
+                    End If
+                    
+                    If Yearly_Change > 0 Then
+                        ws.Cells(Table_Row, 10).Interior.ColorIndex = 4
+                        ws.Cells(Table_Row, 11).Interior.ColorIndex = 4
+                    Else
+                        ws.Cells(Table_Row, 10).Interior.ColorIndex = 3
+                        ws.Cells(Table_Row, 11).Interior.ColorIndex = 3
+                    End If
+                    
+                    Table_Row = Table_Row + 1
+                    
+                End If
+                
+                Last_Ticker = Ticker
+                Total_Volume = 0
+                Year_Opening = ws.Cells(i, 3).Value
+            End If
+            
+            Total_Volume = Total_Volume + ws.Cells(i, 7).Value
+        Next i
+        
+        ws.Cells(2, 17).Value = Greatest_Percent_Increase
+        ws.Cells(2, 16).Value = Greatest_Percent_Increase_Ticker
+        
+        ws.Cells(3, 17).Value = Greatest_Percent_Decrease
+        ws.Cells(3, 16).Value = Greatest_Percent_Decrease_Ticker
+        
+        ws.Cells(4, 17).Value = Greatest_Total_Volume
+        ws.Cells(4, 16).Value = Greatest_Total_Volume_Ticker
+        
+                
+        ws.Range("Q2").NumberFormat = "0.00%"
+        ws.Range("Q3").NumberFormat = "0.00%"
+        
+        Dim j As Integer
+
+        For j = 2 To Table_Row
+        ws.Range("K" & j).NumberFormat = "0.00%"
+        Next j
+        
+    Next ws
+End Sub
